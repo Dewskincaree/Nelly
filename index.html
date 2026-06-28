@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nelly World">
+<title>🌈 Nelly World</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:#fff8f0;font-family:'Nunito','Helvetica Neue',sans-serif;}
+#app{height:100%;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ══ LOGIN ══ */
+#login-screen{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1a0533 0%,#0d1f6e 50%,#0a3d3d 100%);overflow:hidden;}
+.login-stars{position:absolute;inset:0;pointer-events:none;}
+.login-star{position:absolute;border-radius:50%;animation:twinkle ease-in-out infinite;}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
+.login-box{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;padding:2.5rem 2rem;background:rgba(255,255,255,.08);backdrop-filter:blur(20px);border-radius:32px;border:1px solid rgba(255,255,255,.15);width:90%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.login-logo{font-size:4rem;margin-bottom:.5rem;animation:logoSpin 3s ease-in-out infinite alternate;}
+@keyframes logoSpin{from{transform:rotate(-5deg) scale(1)}to{transform:rotate(5deg) scale(1.1)}}
+.login-title{font-size:2rem;font-weight:900;background:linear-gradient(135deg,#FF6B6B,#FFD93D,#4ECDC4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem;text-align:center;}
+.login-subtitle{font-size:.85rem;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:2rem;text-align:center;}
+.google-btn{display:flex;align-items:center;gap:12px;background:#fff;border:none;border-radius:50px;padding:14px 28px;font-size:1rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;width:100%;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.25);margin-bottom:12px;transition:transform .15s,box-shadow .15s;color:#333;}
+.google-btn:active{transform:scale(.96);}
+.google-btn svg{width:22px;height:22px;flex-shrink:0;}
+.guest-btn{background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);border-radius:50px;padding:12px 28px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;width:100%;color:rgba(255,255,255,.8);transition:all .15s;}
+.guest-btn:active{background:rgba(255,255,255,.2);}
+.login-note{font-size:.7rem;color:rgba(255,255,255,.35);margin-top:1.2rem;text-align:center;line-height:1.5;}
+.login-error{font-size:.78rem;color:#FF6B6B;margin-top:.8rem;text-align:center;display:none;}
+
+/* ══ WELCOME ══ */
+#welcome-screen{position:fixed;inset:0;z-index:1000;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#1a0533 0%,#0d1f6e 40%,#0a3d3d 100%);overflow:hidden;}
+.welcome-stars{position:absolute;inset:0;pointer-events:none;}
+.star-dot{position:absolute;border-radius:50%;animation:twinkle ease-in-out infinite;}
+.welcome-balloons{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.balloon{position:absolute;bottom:-80px;animation:floatUp linear infinite;}
+@keyframes floatUp{0%{transform:translateY(0) rotate(-8deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-110vh) rotate(8deg);opacity:0}}
+.welcome-content{display:flex;flex-direction:column;align-items:center;z-index:2;text-align:center;padding:2rem;}
+.welcome-hi{font-size:2.5rem;animation:hiWave 1s ease infinite alternate;}
+@keyframes hiWave{from{transform:rotate(-12deg) scale(1)}to{transform:rotate(12deg) scale(1.2)}}
+.welcome-to{font-size:.95rem;font-weight:800;color:rgba(255,255,255,.65);letter-spacing:.15em;text-transform:uppercase;margin:.8rem 0 .3rem;}
+.nelly-world{display:flex;flex-wrap:wrap;justify-content:center;}
+.nelly-letter{font-size:3rem;font-weight:900;display:inline-block;animation:letterBounce .6s ease infinite alternate;text-shadow:0 4px 20px rgba(0,0,0,.4);}
+@keyframes letterBounce{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-10px) rotate(3deg)}}
+.welcome-sub{font-size:.9rem;font-weight:800;color:rgba(255,255,255,.7);margin-top:.5rem;}
+.welcome-btn{margin-top:2rem;background:linear-gradient(135deg,#FFD93D,#FF8E53);color:#fff;border:none;border-radius:60px;padding:15px 42px;font-size:1.15rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 8px 28px rgba(255,142,83,.5);animation:btnPulse 1.4s ease-in-out infinite alternate;}
+@keyframes btnPulse{from{transform:scale(1)}to{transform:scale(1.07)}}
+
+/* ══ AVATAR ══ */
+#avatar-screen{position:fixed;inset:0;z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#fff8f0,#f0f0ff);padding:2rem 1.2rem;overflow-y:auto;}
+.av-title{font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,#FF6B6B,#7B68EE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;margin-bottom:.4rem;}
+.av-sub{font-size:.9rem;font-weight:700;color:#bbb;margin-bottom:1.4rem;text-align:center;}
+.av-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:360px;margin-bottom:1.5rem;}
+.av-card{border-radius:20px;padding:1.2rem .5rem;text-align:center;cursor:pointer;border:3px solid transparent;transition:all .18s;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.1);}
+.av-card:active{transform:scale(.92);}
+.av-card.selected{border-color:#7B68EE;box-shadow:0 0 0 4px rgba(123,104,238,.2);transform:scale(1.04);}
+.av-card .av-emoji{font-size:2.8rem;}
+.av-card .av-name{font-size:.72rem;font-weight:800;color:#888;margin-top:.4rem;}
+.av-btn{background:linear-gradient(135deg,#7B68EE,#A855F7);color:#fff;border:none;border-radius:50px;padding:14px 40px;font-size:1.05rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 6px 20px rgba(123,104,238,.4);}
+
+/* ══ HOME ══ */
+.home-wrap{flex:1;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+.home-inner{display:flex;flex-direction:column;align-items:center;padding:1.2rem 1.2rem 2rem;min-height:100%;}
+.home-header{display:flex;align-items:center;justify-content:space-between;width:100%;max-width:400px;margin-bottom:.3rem;}
+.home-user{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.home-user-photo{width:36px;height:36px;border-radius:50%;border:2px solid #7B68EE;object-fit:cover;}
+.home-user-name{font-size:.78rem;font-weight:800;color:#7B68EE;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.logout-btn{background:rgba(0,0,0,.06);border:none;border-radius:50px;padding:6px 12px;font-size:.72rem;font-weight:800;cursor:pointer;color:#999;font-family:'Nunito',sans-serif;}
+.app-title{font-size:1.9rem;font-weight:900;background:linear-gradient(135deg,#FF6B6B,#FFD93D,#4ECDC4,#7B68EE);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-align:center;line-height:1.2;flex:1;}
+.avatar-bubble{font-size:2rem;cursor:pointer;}
+.app-subtitle{font-size:.85rem;font-weight:700;color:#aaa;margin-bottom:1.2rem;text-align:center;}
+.section-label{font-size:.72rem;font-weight:800;color:#bbb;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;align-self:flex-start;padding-left:4px;}
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:400px;margin-bottom:1.1rem;}
+.menu-card{border-radius:22px;padding:1.3rem 1rem;cursor:pointer;border:none;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(0,0,0,.13);transition:transform .15s;font-family:'Nunito',sans-serif;}
+.menu-card:active{transform:scale(.92);}
+.menu-card .icon{font-size:2.6rem;line-height:1;}
+.menu-card .label{font-size:.95rem;font-weight:900;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.2);text-align:center;}
+.menu-card .sublabel{font-size:.68rem;font-weight:700;color:rgba(255,255,255,.85);text-align:center;}
+.c1{background:linear-gradient(135deg,#FF6B6B,#FF8E53);}
+.c2{background:linear-gradient(135deg,#4ECDC4,#44A8E0);}
+.c3{background:linear-gradient(135deg,#A855F7,#EC4899);}
+.c4{background:linear-gradient(135deg,#F59E0B,#EF4444);}
+.c5{background:linear-gradient(135deg,#10B981,#059669);}
+.c6{background:linear-gradient(135deg,#3B82F6,#6366F1);}
+.c7{background:linear-gradient(135deg,#F472B6,#EC4899);}
+.c8{background:linear-gradient(135deg,#FF6B6B,#A855F7);}
+.c9{background:linear-gradient(135deg,#F59E0B,#10B981);}
+.c10{background:linear-gradient(135deg,#06B6D4,#3B82F6);}
+.c11{background:linear-gradient(135deg,#EC4899,#F59E0B);}
+.song-card{border-radius:22px;padding:1.1rem 1rem;cursor:pointer;border:none;display:flex;align-items:center;gap:14px;box-shadow:0 6px 20px rgba(0,0,0,.13);width:100%;max-width:400px;background:linear-gradient(135deg,#FF0000,#CC0000);font-family:'Nunito',sans-serif;margin-bottom:1.1rem;}
+.song-card:active{transform:scale(.96);}
+
+/* ══ INNER SCREENS ══ */
+.screen{display:none;flex-direction:column;height:100%;background:#fff8f0;overflow:hidden;}
+.screen.active{display:flex;}
+.screen-header{display:flex;align-items:center;padding:.75rem 1rem;gap:8px;background:rgba(255,248,240,.97);border-bottom:1px solid rgba(0,0,0,.06);flex-shrink:0;padding-top:max(.75rem,env(safe-area-inset-top));}
+.back-btn{background:rgba(0,0,0,.07);border:none;border-radius:50px;padding:7px 13px;font-size:.85rem;font-weight:800;cursor:pointer;color:#555;font-family:'Nunito',sans-serif;white-space:nowrap;}
+.nav-btn{background:rgba(123,104,238,.12);border:none;border-radius:50px;padding:7px 13px;font-size:.85rem;font-weight:800;cursor:pointer;color:#7B68EE;font-family:'Nunito',sans-serif;white-space:nowrap;transition:all .15s;}
+.nav-btn:active{background:rgba(123,104,238,.25);}
+.nav-btn:disabled{opacity:.3;cursor:default;}
+.screen-title{font-size:1rem;font-weight:900;flex:1;text-align:center;}
+.screen-counter{font-size:.72rem;font-weight:700;color:#bbb;text-align:center;padding:.3rem;background:rgba(255,248,240,.97);border-bottom:1px solid rgba(0,0,0,.04);flex-shrink:0;}
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px max(12px,env(safe-area-inset-bottom));}
+.numbers-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
+.alpha-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.num-card{border-radius:14px;padding:9px 4px;text-align:center;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.1);transition:transform .15s;}
+.num-card:active{transform:scale(.88);}
+.num-card .num{font-size:1.3rem;font-weight:900;color:#fff;line-height:1;}
+.num-card .name{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.92);margin-top:2px;line-height:1.2;}
+.alpha-card{border-radius:18px;padding:11px 5px;text-align:center;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.1);display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .15s;}
+.alpha-card:active{transform:scale(.88);}
+.alpha-card .letter{font-size:1.9rem;font-weight:900;color:#fff;line-height:1;}
+.alpha-card .word{font-size:.58rem;font-weight:700;color:rgba(255,255,255,.92);}
+.alpha-card .emoji{font-size:1.3rem;line-height:1;}
+/* highlight current item */
+.num-card.current-item,.alpha-card.current-item,.color-card.current-item,.word-card.current-item,.animal-card.current-item{outline:3px solid #FFD93D;outline-offset:2px;transform:scale(1.04);}
+
+/* colors/words/animals grids */
+.colors-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.color-card{border-radius:22px;padding:1.2rem .5rem;text-align:center;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.12);display:flex;flex-direction:column;align-items:center;gap:6px;transition:transform .15s;}
+.color-card:active{transform:scale(.9);}
+.color-blob{width:56px;height:56px;border-radius:50%;box-shadow:0 4px 12px rgba(0,0,0,.15);}
+.color-name-en{font-size:.85rem;font-weight:900;color:#fff;}
+.color-name-ar{font-size:.72rem;font-weight:700;color:rgba(255,255,255,.85);}
+.words-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.word-card{border-radius:20px;padding:1rem .8rem;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.1);display:flex;flex-direction:column;align-items:center;gap:5px;transition:transform .15s;}
+.word-card:active{transform:scale(.92);}
+.word-card .wc-emoji{font-size:2.5rem;}
+.word-card .wc-en{font-size:.9rem;font-weight:900;color:#fff;}
+.word-card .wc-ar{font-size:.75rem;font-weight:700;color:rgba(255,255,255,.88);}
+.word-card .wc-sentence{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.75);margin-top:2px;font-style:italic;}
+.animals-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.animal-card{border-radius:20px;padding:1rem .5rem;text-align:center;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.1);display:flex;flex-direction:column;align-items:center;gap:4px;transition:transform .15s;}
+.animal-card:active{transform:scale(.9);}
+.animal-card .an-emoji{font-size:2.6rem;}
+.animal-card .an-en{font-size:.75rem;font-weight:900;color:#fff;}
+.animal-card .an-ar{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.85);}
+.animal-card .an-sound{font-size:.55rem;font-weight:700;color:rgba(255,255,255,.7);font-style:italic;}
+
+/* ══ POPUP ══ */
+.popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;}
+.popup-overlay.open{display:flex;}
+.popup{background:#fff;border-radius:30px;padding:1.5rem 1.3rem 1.3rem;text-align:center;width:90%;max-width:320px;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:popIn .28s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto;}
+@keyframes popIn{from{transform:scale(.65) rotate(-5deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
+.popup-stars{font-size:1.3rem;margin-bottom:.3rem;}
+.popup-emoji{font-size:3.5rem;margin-bottom:.2rem;display:block;animation:bouncein .65s ease .1s;}
+@keyframes bouncein{0%,100%{transform:translateY(0)}40%{transform:translateY(-12px)}70%{transform:translateY(-5px)}}
+.popup-letter{font-size:3rem;font-weight:900;line-height:1;margin-bottom:.2rem;}
+.popup-name{font-size:1.1rem;font-weight:800;color:#333;margin-bottom:.15rem;}
+.popup-trans{font-size:.88rem;font-weight:700;color:#bbb;margin-bottom:.2rem;}
+.popup-sentence{font-size:.78rem;font-weight:700;color:#aaa;margin-bottom:.7rem;font-style:italic;padding:0 .3rem;}
+/* nav inside popup */
+.popup-nav{display:flex;gap:8px;margin-bottom:.7rem;}
+.popup-nav-btn{flex:1;background:rgba(123,104,238,.1);border:none;border-radius:50px;padding:9px 8px;font-size:.85rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;color:#7B68EE;transition:all .15s;}
+.popup-nav-btn:active{background:rgba(123,104,238,.22);}
+.popup-nav-btn:disabled{opacity:.3;}
+.speak-btn{background:linear-gradient(135deg,#4ECDC4,#44A8E0);color:#fff;border:none;border-radius:50px;padding:11px 20px;font-size:.92rem;font-weight:900;cursor:pointer;margin-bottom:.5rem;width:100%;font-family:'Nunito',sans-serif;}
+.speak-btn:active{transform:scale(.95);}
+.speak-btn.speaking{background:linear-gradient(135deg,#FF6B6B,#FF8E53);}
+/* record */
+.record-row{display:flex;gap:7px;margin-bottom:.5rem;}
+.rec-btn{flex:1;border:none;border-radius:50px;padding:10px 8px;font-size:.82rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;}
+.rec-btn.record{background:linear-gradient(135deg,#EF4444,#DC2626);color:#fff;}
+.rec-btn.record.recording{animation:recPulse .7s ease infinite alternate;}
+@keyframes recPulse{from{box-shadow:0 0 0 0 rgba(239,68,68,.4)}to{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+.rec-btn.play-rec{background:linear-gradient(135deg,#10B981,#059669);color:#fff;}
+.rec-btn.play-rec:disabled{opacity:.4;}
+.rec-status{font-size:.67rem;color:#bbb;text-align:center;margin-bottom:.4rem;min-height:14px;}
+.close-btn{background:#f2f2f2;color:#777;border:none;border-radius:50px;padding:10px 20px;font-size:.9rem;font-weight:800;cursor:pointer;width:100%;font-family:'Nunito',sans-serif;}
+
+/* ══ GAMES ══ */
+.game-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px max(12px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:11px;}
+.game-score{display:flex;justify-content:space-between;align-items:center;background:#fff;border-radius:16px;padding:9px 14px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.score-item{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.score-val{font-size:1.3rem;font-weight:900;color:#7B68EE;}
+.score-lbl{font-size:.6rem;font-weight:700;color:#bbb;}
+.game-question{background:#fff;border-radius:20px;padding:1rem;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.q-label{font-size:.76rem;font-weight:800;color:#bbb;margin-bottom:.4rem;}
+.q-main{font-size:3rem;font-weight:900;line-height:1;margin-bottom:.3rem;}
+.q-sub{font-size:.9rem;font-weight:700;color:#888;}
+.game-options{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.opt-btn{border-radius:18px;padding:.85rem .5rem;font-size:1.15rem;font-weight:900;border:3px solid transparent;cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.1);color:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.opt-btn:active{transform:scale(.92);}
+.opt-btn .opt-sub{font-size:.6rem;font-weight:700;color:rgba(255,255,255,.9);}
+.opt-btn.correct{border-color:#10B981!important;transform:scale(1.04);box-shadow:0 0 0 4px rgba(16,185,129,.25);}
+.opt-btn.wrong{border-color:#EF4444!important;opacity:.55;}
+.next-btn{background:linear-gradient(135deg,#7B68EE,#A855F7);color:#fff;border:none;border-radius:50px;padding:12px;font-size:.92rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;}
+.count-emojis{font-size:2rem;line-height:1.6;text-align:center;background:#fff;border-radius:20px;padding:.9rem;box-shadow:0 4px 16px rgba(0,0,0,.1);word-break:break-all;letter-spacing:2px;}
+.count-options{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.count-opt{border-radius:16px;padding:.9rem .5rem;font-size:1.6rem;font-weight:900;border:3px solid transparent;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.1);color:#fff;text-align:center;}
+.count-opt:active{transform:scale(.9);}
+.count-opt.correct{border-color:#10B981!important;}
+.count-opt.wrong{opacity:.5;}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.match-col{display:flex;flex-direction:column;gap:7px;}
+.match-col-title{font-size:.7rem;font-weight:800;color:#bbb;text-align:center;margin-bottom:2px;}
+.match-item{border-radius:14px;padding:10px 5px;font-size:1rem;font-weight:900;border:3px solid transparent;cursor:pointer;font-family:'Nunito',sans-serif;text-align:center;color:#fff;box-shadow:0 3px 10px rgba(0,0,0,.1);transition:all .15s;min-height:48px;display:flex;align-items:center;justify-content:center;}
+.match-item:active{transform:scale(.94);}
+.match-item.selected{border-color:#FFD93D!important;transform:scale(1.04);}
+.match-item.matched{opacity:.4;border-color:#10B981!important;}
+.match-item.wrong-flash{border-color:#EF4444!important;}
+.drag-targets{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;background:#fff;border-radius:20px;padding:11px;min-height:75px;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.drop-zone{width:65px;height:65px;border-radius:14px;border:2.5px dashed #ddd;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:800;color:#bbb;transition:all .2s;flex-direction:column;gap:1px;text-align:center;padding:4px;}
+.drop-zone.filled{border-style:solid;color:#fff;}
+.drag-items{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;background:#fff;border-radius:20px;padding:11px;box-shadow:0 4px 16px rgba(0,0,0,.1);}
+.drag-item{width:65px;height:65px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:#fff;cursor:grab;box-shadow:0 3px 10px rgba(0,0,0,.15);transition:transform .15s;-webkit-user-select:none;user-select:none;touch-action:none;flex-direction:column;gap:2px;}
+.drag-item:active{transform:scale(1.1);}
+.drag-item.placed{opacity:0;pointer-events:none;}
+.drag-item .di-sub{font-size:.5rem;font-weight:700;color:rgba(255,255,255,.9);}
+.drag-instructions{font-size:.74rem;font-weight:700;color:#bbb;text-align:center;}
+
+/* ══ CONFETTI / RESULT ══ */
+.confetti-wrap{position:fixed;inset:0;pointer-events:none;z-index:999;overflow:hidden;}
+.confetti-piece{position:absolute;animation:fall linear forwards;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.result-banner{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;border-radius:28px;padding:1.8rem 2rem;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);z-index:500;animation:popIn .3s ease;min-width:220px;}
+.result-emoji{font-size:3.8rem;}
+.result-msg{font-size:1.4rem;font-weight:900;color:#333;margin:.4rem 0;}
+.result-score{font-size:.95rem;font-weight:700;color:#888;margin-bottom:.9rem;}
+.result-btn{background:linear-gradient(135deg,#7B68EE,#A855F7);color:#fff;border:none;border-radius:50px;padding:12px 28px;font-size:.95rem;font-weight:900;cursor:pointer;font-family:'Nunito',sans-serif;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="login-screen">
+  <div class="login-stars" id="login-stars"></div>
+  <div class="login-box">
+    <div class="login-logo">🌈</div>
+    <div class="login-title">Nelly World</div>
+    <div class="login-subtitle">عالم نيلي للتعلم والمرح<br>Sign in to save your progress!</div>
+    <button class="google-btn" onclick="loginWithGoogle()">
+      <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 2.9l5.7-5.7C34.1 6.5 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16.1 19 13 24 13c3.1 0 5.8 1.1 7.9 2.9l5.7-5.7C34.1 6.5 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.5 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.3-2.4 4.3-4.4 5.7l6.2 5.2C36.9 39.5 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg>
+      Continue with Google
+    </button>
+    <button class="guest-btn" onclick="loginAsGuest()">👤 Continue as Guest</button>
+    <div class="login-error" id="login-error"></div>
+    <div class="login-note">Your voice recordings are saved to your account.<br>Guest mode saves locally on this device only.</div>
+  </div>
+</div>
+
+<!-- ══ WELCOME ══ -->
+<div id="welcome-screen">
+  <div class="welcome-stars" id="ws-stars"></div>
+  <div class="welcome-balloons" id="ws-balloons"></div>
+  <div class="welcome-content">
+    <div class="welcome-hi">👋</div>
+    <div class="welcome-to">Welcome to</div>
+    <div class="nelly-world" id="nelly-letters"></div>
+    <div class="welcome-sub" style="margin-top:.5rem;">Your magical learning adventure ✨</div>
+    <div class="welcome-sub" style="font-size:.78rem;color:rgba(255,255,255,.4);margin-top:.2rem;">عالم نيلي للتعلم والمرح</div>
+    <button class="welcome-btn" onclick="enterApp()">Let's Go! 🚀</button>
+  </div>
+</div>
+
+<!-- ══ AVATAR ══ -->
+<div id="avatar-screen">
+  <div class="av-title">Choose Your Hero! 🦸</div>
+  <div class="av-sub">Pick your character!</div>
+  <div class="av-grid" id="av-grid"></div>
+  <button class="av-btn" onclick="saveAvatar()">That's me! ✨</button>
+</div>
+
+<!-- ══ HOME ══ -->
+<div id="home" class="screen active" style="display:flex;flex-direction:column;height:100%;overflow:hidden;">
+  <div class="home-wrap">
+    <div class="home-inner">
+      <div class="home-header">
+        <div class="home-user" onclick="openAvatarChange()">
+          <img class="home-user-photo" id="home-photo" src="" alt="" style="display:none">
+          <div class="avatar-bubble" id="home-avatar">🦄</div>
+          <div class="home-user-name" id="home-username">Nelly</div>
+        </div>
+        <div class="app-title">Nelly World 🌈</div>
+        <button class="logout-btn" onclick="doLogout()">Sign out</button>
+      </div>
+      <div class="app-subtitle">تعلم وإلعب • Learn & Play</div>
+
+      <div class="section-label">📚 Learn</div>
+      <div class="menu-grid">
+        <button class="menu-card c1" onclick="show('numbers-en')"><div class="icon">🔢</div><div class="label">Numbers</div><div class="sublabel">English 1–100</div></button>
+        <button class="menu-card c2" onclick="show('numbers-ar')"><div class="icon">🔢</div><div class="label">الأرقام</div><div class="sublabel">عربي ١–١٠٠</div></button>
+        <button class="menu-card c3" onclick="show('alpha-en')"><div class="icon">🔤</div><div class="label">ABC</div><div class="sublabel">English alphabet</div></button>
+        <button class="menu-card c4" onclick="show('alpha-ar')"><div class="icon">🔠</div><div class="label">أ ب ت</div><div class="sublabel">الحروف العربية</div></button>
+        <button class="menu-card c9" onclick="show('colors-screen')"><div class="icon">🎨</div><div class="label">Colors</div><div class="sublabel">الألوان</div></button>
+        <button class="menu-card c10" onclick="show('words-screen')"><div class="icon">📝</div><div class="label">Words</div><div class="sublabel">كلمات وجمل</div></button>
+        <button class="menu-card c11" style="grid-column:span 2" onclick="show('animals-screen')"><div class="icon">🐘</div><div class="label">Animals</div><div class="sublabel">الحيوانات</div></button>
+      </div>
+
+      <div class="section-label">🎮 Games</div>
+      <div class="menu-grid">
+        <button class="menu-card c5" onclick="startCounting()"><div class="icon">🍎</div><div class="label">Counting</div><div class="sublabel">Count & tap!</div></button>
+        <button class="menu-card c6" onclick="startMatching()"><div class="icon">🃏</div><div class="label">Matching</div><div class="sublabel">Find the pair!</div></button>
+        <button class="menu-card c7" onclick="startDragDrop()"><div class="icon">🖐️</div><div class="label">Drag & Drop</div><div class="sublabel">Drop the number!</div></button>
+        <button class="menu-card c8" onclick="startSpotLetter()"><div class="icon">🔍</div><div class="label">Spot It!</div><div class="sublabel">Find the letter!</div></button>
+      </div>
+
+      <div class="section-label">🎵 Songs</div>
+      <button class="song-card" onclick="openYoutube()">
+        <div style="font-size:2.2rem">▶️</div>
+        <div><div style="font-size:.95rem;font-weight:900;color:#fff">ABC Song on YouTube</div><div style="font-size:.68rem;font-weight:700;color:rgba(255,255,255,.85)">Tap to watch & sing along!</div></div>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LEARN SCREENS ══ -->
+<div id="numbers-en" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="show('home')">⬅</button>
+    <div class="screen-title">🔢 Numbers 1–100</div>
+    <button class="nav-btn" id="nen-prev" onclick="navItem('numbers-en',-1)" disabled>‹ Prev</button>
+    <button class="nav-btn" id="nen-next" onclick="navItem('numbers-en',1)">Next ›</button>
+  </div>
+  <div class="screen-counter" id="nen-counter">Tap any number!</div>
+  <div class="scroll-area"><div class="numbers-grid" id="en-numbers-grid"></div></div>
+</div>
+
+<div id="numbers-ar" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="show('home')">⬅</button>
+    <div class="screen-title">🔢 الأرقام ١–١٠٠</div>
+    <button class="nav-btn" id="nar-prev" onclick="navItem('numbers-ar',-1)" disabled>‹ Prev</button>
+    <button class="nav-btn" id="nar-next" onclick="navItem('numbers-ar',1)">Next ›</button>
+  </div>
+  <div class="screen-counter" id="nar-counter">اضغط على أي رقم!</div>
+  <div class="scroll-area"><div class="numbers-grid" id="ar-numbers-grid"></div></div>
+</div>
+
+<div id="alpha-en" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="show('home')">⬅</button>
+    <div class="screen-title">🔤 ABC Alphabet</div>
+    <button class="nav-btn" id="aen-prev" onclick="navItem('alpha-en',-1)" disabled>‹ Prev</button>
+    <button class="nav-btn" id="aen-next" onclick="navItem('alpha-en',1)">Next ›</button>
+  </div>
+  <div class="screen-counter" id="aen-counter">Tap any letter!</div>
+  <div class="scroll-area"><div class="alpha-grid" id="en-alpha-grid"></div></div>
+</div>
+
+<div id="alpha-ar" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="show('home')">⬅</button>
+    <div class="screen-title">🔠 الحروف العربية</div>
+    <button class="nav-btn" id="aar-prev" onclick="navItem('alpha-ar',-1)" disabled>‹ Prev</button>
+    <button class="nav-btn" id="aar-next" onclick="navItem('alpha-ar',1)">Next ›</button>
+  </div>
+  <div class="screen-counter" id="aar-counter">اضغط على أي حرف!</div>
+  <div class="scroll-area"><div class="alpha-grid" id="ar-alpha-grid"></div></div>
+</div>
+
+<div id="colors-screen" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="show('home')">⬅</button>
+    <div class="screen-title">🎨 Colors / الألوان</div>
+    <button class="nav-btn" id="col-prev" onclick="navItem('colors-screen',-1)" disabled>‹ Prev</button>
+    <button class="nav-btn" id="col-next" onclick="navItem('colors-screen',1)">Next ›</button>
+  </div>
+  <div class="screen-counter" id="col-counter">Tap any color!</div>
+  <div class="scroll-area"><div class="colors-grid" id="colors-grid"></div></div>
+</div>
+
+<div id="words-screen" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="show('home')">⬅</button>
+    <div class="screen-title">📝 Words & Sentences</div>
+    <button class="nav-btn" id="wrd-prev" onclick="navItem('words-screen',-1)" disabled>‹ Prev</button>
+    <button class="nav-btn" id="wrd-next" onclick="navItem('words-screen',1)">Next ›</button>
+  </div>
+  <div class="screen-counter" id="wrd-counter">Tap any word!</div>
+  <div class="scroll-area"><div class="words-grid" id="words-grid"></div></div>
+</div>
+
+<div id="animals-screen" class="screen">
+  <div class="screen-header">
+    <button class="back-btn" onclick="show('home')">⬅</button>
+    <div class="screen-title">🐘 Animals / الحيوانات</div>
+    <button class="nav-btn" id="anm-prev" onclick="navItem('animals-screen',-1)" disabled>‹ Prev</button>
+    <button class="nav-btn" id="anm-next" onclick="navItem('animals-screen',1)">Next ›</button>
+  </div>
+  <div class="screen-counter" id="anm-counter">Tap any animal!</div>
+  <div class="scroll-area"><div class="animals-grid" id="animals-grid"></div></div>
+</div>
+
+<!-- ══ GAMES ══ -->
+<div id="game-counting" class="screen">
+  <div class="screen-header"><button class="back-btn" onclick="show('home')">⬅</button><div class="screen-title">🍎 Counting Game</div></div>
+  <div class="game-area">
+    <div class="game-score"><div class="score-item"><div class="score-val" id="cnt-score">0</div><div class="score-lbl">Score</div></div><div class="score-item"><div class="score-val" id="cnt-streak">0</div><div class="score-lbl">Streak 🔥</div></div><div class="score-item"><div class="score-val" id="cnt-q">1</div><div class="score-lbl">Q</div></div></div>
+    <div class="game-question"><div class="q-label">How many? 👀</div><div class="count-emojis" id="cnt-emojis"></div></div>
+    <div class="count-options" id="cnt-options"></div>
+    <button class="next-btn" id="cnt-next" style="display:none" onclick="nextCounting()">Next ➡</button>
+  </div>
+</div>
+<div id="game-matching" class="screen">
+  <div class="screen-header"><button class="back-btn" onclick="show('home')">⬅</button><div class="screen-title">🃏 Matching Game</div></div>
+  <div class="game-area">
+    <div class="game-score"><div class="score-item"><div class="score-val" id="mat-score">0</div><div class="score-lbl">Score</div></div><div class="score-item"><div class="score-val" id="mat-left">8</div><div class="score-lbl">Left</div></div></div>
+    <div style="font-size:.74rem;font-weight:700;color:#bbb;text-align:center;">Tap number → then its name!</div>
+    <div class="match-grid"><div><div class="match-col-title">Numbers</div><div class="match-col" id="match-nums"></div></div><div><div class="match-col-title">Words</div><div class="match-col" id="match-words"></div></div></div>
+  </div>
+</div>
+<div id="game-dragdrop" class="screen">
+  <div class="screen-header"><button class="back-btn" onclick="show('home')">⬅</button><div class="screen-title">🖐️ Drag & Drop</div></div>
+  <div class="game-area">
+    <div class="game-score"><div class="score-item"><div class="score-val" id="dd-score">0</div><div class="score-lbl">Score</div></div><div class="score-item"><div class="score-val" id="dd-left">6</div><div class="score-lbl">Left</div></div></div>
+    <div class="drag-instructions">Drag number to its word! 👇</div>
+    <div class="drag-items" id="dd-items"></div>
+    <div class="drag-targets" id="dd-targets"></div>
+    <button class="next-btn" id="dd-next" style="display:none" onclick="startDragDrop()">Play Again 🔄</button>
+  </div>
+</div>
+<div id="game-spot" class="screen">
+  <div class="screen-header"><button class="back-btn" onclick="show('home')">⬅</button><div class="screen-title">🔍 Spot It!</div></div>
+  <div class="game-area">
+    <div class="game-score"><div class="score-item"><div class="score-val" id="sp-score">0</div><div class="score-lbl">Score</div></div><div class="score-item"><div class="score-val" id="sp-streak">0</div><div class="score-lbl">Streak 🔥</div></div><div class="score-item"><div class="score-val" id="sp-q">1</div><div class="score-lbl">Q</div></div></div>
+    <div class="game-question"><div class="q-label" id="sp-instruction">Find this letter!</div><div class="q-main" id="sp-target"></div><div class="q-sub" id="sp-hint"></div></div>
+    <div class="game-options" id="sp-options"></div>
+    <button class="next-btn" id="sp-next" style="display:none" onclick="nextSpot()">Next ➡</button>
+  </div>
+</div>
+</div><!-- end #app -->
+
+<!-- ══ POPUP ══ -->
+<div class="popup-overlay" id="popup" onclick="closePopup(event)">
+  <div class="popup">
+    <div class="popup-stars" id="popup-stars">⭐⭐⭐</div>
+    <div class="popup-emoji" id="popup-emoji"></div>
+    <div class="popup-letter" id="popup-letter"></div>
+    <div class="popup-name" id="popup-name"></div>
+    <div class="popup-trans" id="popup-trans"></div>
+    <div class="popup-sentence" id="popup-sentence" style="display:none"></div>
+    <div class="popup-nav">
+      <button class="popup-nav-btn" id="pp-prev" onclick="popupNav(-1)">‹ Prev</button>
+      <button class="popup-nav-btn" id="pp-next" onclick="popupNav(1)">Next ›</button>
+    </div>
+    <button class="speak-btn" id="speak-btn" onclick="speakCurrent()">🔊 Say it!</button>
+    <div class="record-row">
+      <button class="rec-btn record" id="rec-record-btn" onclick="toggleRecord()">🎙 Record</button>
+      <button class="rec-btn play-rec" id="rec-play-btn" onclick="playRecording()" disabled>▶ My Voice</button>
+    </div>
+    <div class="rec-status" id="rec-status"></div>
+    <button class="close-btn" onclick="closePopup()">✓ Got it!</button>
+  </div>
+</div>
+
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<!-- ══ FIREBASE ══ -->
+<script type="module">
+import{initializeApp}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import{getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import{getFirestore,doc,setDoc,getDoc}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+import{getStorage,ref,uploadBytes,getDownloadURL}from'https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js';
+
+// ── YOUR FIREBASE CONFIG ──────────────────────────────────
+// Replace these values with your own Firebase project settings.
+// Create a free project at https://console.firebase.google.com
+// Enable: Authentication > Google, Firestore Database, Storage
+const firebaseConfig={
+  apiKey:"YOUR_API_KEY",
+  authDomain:"YOUR_PROJECT.firebaseapp.com",
+  projectId:"YOUR_PROJECT_ID",
+  storageBucket:"YOUR_PROJECT.appspot.com",
+  messagingSenderId:"YOUR_SENDER_ID",
+  appId:"YOUR_APP_ID"
+};
+// ─────────────────────────────────────────────────────────
+
+const fbApp=initializeApp(firebaseConfig);
+const auth=getAuth(fbApp);
+const db=getFirestore(fbApp);
+const storage=getStorage(fbApp);
+const provider=new GoogleAuthProvider();
+
+let currentUser=null;
+
+// Expose to global scope
+window._fbAuth={
+  loginGoogle:async()=>{
+    try{
+      const r=await signInWithPopup(auth,provider);
+      return r.user;
+    }catch(e){throw e;}
+  },
+  logout:()=>signOut(auth),
+  saveRecordingToCloud:async(key,blob)=>{
+    if(!currentUser)return null;
+    try{
+      const storageRef=ref(storage,`voices/${currentUser.uid}/${encodeURIComponent(key)}.webm`);
+      await uploadBytes(storageRef,blob);
+      const url=await getDownloadURL(storageRef);
+      // Save URL to Firestore
+      const userDoc=doc(db,'users',currentUser.uid);
+      const snap=await getDoc(userDoc);
+      const existing=snap.exists()?snap.data().recordings||{}:{};
+      existing[key]=url;
+      await setDoc(userDoc,{recordings:existing,avatar:window._selectedAvatar||'🦄',name:currentUser.displayName},{merge:true});
+      return url;
+    }catch(e){console.error('Cloud save error',e);return null;}
+  },
+  loadRecordingsFromCloud:async()=>{
+    if(!currentUser)return {};
+    try{
+      const snap=await getDoc(doc(db,'users',currentUser.uid));
+      return snap.exists()?snap.data().recordings||{}:{};
+    }catch(e){return {};}
+  },
+  loadAvatarFromCloud:async()=>{
+    if(!currentUser)return null;
+    try{
+      const snap=await getDoc(doc(db,'users',currentUser.uid));
+      return snap.exists()?snap.data().avatar||null:null;
+    }catch(e){return null;}
+  },
+  saveAvatarToCloud:async(em)=>{
+    if(!currentUser)return;
+    try{await setDoc(doc(db,'users',currentUser.uid),{avatar:em},{merge:true});}catch(e){}
+  }
+};
+
+onAuthStateChanged(auth,async user=>{
+  currentUser=user;
+  if(user){
+    window._fbUser=user;
+    // Load cloud recordings
+    const cloudRecs=await window._fbAuth.loadRecordingsFromCloud();
+    Object.assign(window._recordingStore,cloudRecs);
+    // Load avatar
+    const av=await window._fbAuth.loadAvatarFromCloud();
+    if(av){window._selectedAvatar=av;document.getElementById('home-avatar').textContent=av;}
+    // Show welcome
+    document.getElementById('home-username').textContent=user.displayName?user.displayName.split(' ')[0]:'Friend';
+    const photo=document.getElementById('home-photo');
+    if(user.photoURL){photo.src=user.photoURL;photo.style.display='block';}
+    window._showWelcome();
+  } else {
+    window._fbUser=null;
+  }
+});
+</script>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const numColors=['#FF6B6B','#FF8E53','#F59E0B','#EF4444','#10B981','#4ECDC4','#44A8E0','#7B68EE','#A855F7','#EC4899'];
+const enNums=['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty','twenty-one','twenty-two','twenty-three','twenty-four','twenty-five','twenty-six','twenty-seven','twenty-eight','twenty-nine','thirty','thirty-one','thirty-two','thirty-three','thirty-four','thirty-five','thirty-six','thirty-seven','thirty-eight','thirty-nine','forty','forty-one','forty-two','forty-three','forty-four','forty-five','forty-six','forty-seven','forty-eight','forty-nine','fifty','fifty-one','fifty-two','fifty-three','fifty-four','fifty-five','fifty-six','fifty-seven','fifty-eight','fifty-nine','sixty','sixty-one','sixty-two','sixty-three','sixty-four','sixty-five','sixty-six','sixty-seven','sixty-eight','sixty-nine','seventy','seventy-one','seventy-two','seventy-three','seventy-four','seventy-five','seventy-six','seventy-seven','seventy-eight','seventy-nine','eighty','eighty-one','eighty-two','eighty-three','eighty-four','eighty-five','eighty-six','eighty-seven','eighty-eight','eighty-nine','ninety','ninety-one','ninety-two','ninety-three','ninety-four','ninety-five','ninety-six','ninety-seven','ninety-eight','ninety-nine','one hundred'];
+const arNums=['واحد','اثنان','ثلاثة','أربعة','خمسة','ستة','سبعة','ثمانية','تسعة','عشرة','أحد عشر','اثنا عشر','ثلاثة عشر','أربعة عشر','خمسة عشر','ستة عشر','سبعة عشر','ثمانية عشر','تسعة عشر','عشرون','واحد وعشرون','اثنان وعشرون','ثلاثة وعشرون','أربعة وعشرون','خمسة وعشرون','ستة وعشرون','سبعة وعشرون','ثمانية وعشرون','تسعة وعشرون','ثلاثون','واحد وثلاثون','اثنان وثلاثون','ثلاثة وثلاثون','أربعة وثلاثون','خمسة وثلاثون','ستة وثلاثون','سبعة وثلاثون','ثمانية وثلاثون','تسعة وثلاثون','أربعون','واحد وأربعون','اثنان وأربعون','ثلاثة وأربعون','أربعة وأربعون','خمسة وأربعون','ستة وأربعون','سبعة وأربعون','ثمانية وأربعون','تسعة وأربعون','خمسون','واحد وخمسون','اثنان وخمسون','ثلاثة وخمسون','أربعة وخمسون','خمسة وخمسون','ستة وخمسون','سبعة وخمسون','ثمانية وخمسون','تسعة وخمسون','ستون','واحد وستون','اثنان وستون','ثلاثة وستون','أربعة وستون','خمسة وستون','ستة وستون','سبعة وستون','ثمانية وستون','تسعة وستون','سبعون','واحد وسبعون','اثنان وسبعون','ثلاثة وسبعون','أربعة وسبعون','خمسة وسبعون','ستة وسبعون','سبعة وسبعون','ثمانية وسبعون','تسعة وسبعون','ثمانون','واحد وثمانون','اثنان وثمانون','ثلاثة وثمانون','أربعة وثمانون','خمسة وثمانون','ستة وثمانون','سبعة وثمانون','ثمانية وثمانون','تسعة وثمانون','تسعون','واحد وتسعون','اثنان وتسعون','ثلاثة وتسعون','أربعة وتسعون','خمسة وتسعون','ستة وتسعون','سبعة وتسعون','ثمانية وتسعون','تسعة وتسعون','مائة'];
+const arNumerals=['١','٢','٣','٤','٥','٦','٧','٨','٩','١٠','١١','١٢','١٣','١٤','١٥','١٦','١٧','١٨','١٩','٢٠','٢١','٢٢','٢٣','٢٤','٢٥','٢٦','٢٧','٢٨','٢٩','٣٠','٣١','٣٢','٣٣','٣٤','٣٥','٣٦','٣٧','٣٨','٣٩','٤٠','٤١','٤٢','٤٣','٤٤','٤٥','٤٦','٤٧','٤٨','٤٩','٥٠','٥١','٥٢','٥٣','٥٤','٥٥','٥٦','٥٧','٥٨','٥٩','٦٠','٦١','٦٢','٦٣','٦٤','٦٥','٦٦','٦٧','٦٨','٦٩','٧٠','٧١','٧٢','٧٣','٧٤','٧٥','٧٦','٧٧','٧٨','٧٩','٨٠','٨١','٨٢','٨٣','٨٤','٨٥','٨٦','٨٧','٨٨','٨٩','٩٠','٩١','٩٢','٩٣','٩٤','٩٥','٩٦','٩٧','٩٨','٩٩','١٠٠'];
+const enAlpha=[{l:'A',e:'Apple',em:'🍎',ar:'تفاحة'},{l:'B',e:'Ball',em:'⚽',ar:'كرة'},{l:'C',e:'Cat',em:'🐱',ar:'قطة'},{l:'D',e:'Dog',em:'🐶',ar:'كلب'},{l:'E',e:'Egg',em:'🥚',ar:'بيضة'},{l:'F',e:'Fish',em:'🐟',ar:'سمكة'},{l:'G',e:'Grapes',em:'🍇',ar:'عنب'},{l:'H',e:'House',em:'🏠',ar:'بيت'},{l:'I',e:'Ice Cream',em:'🍦',ar:'آيس كريم'},{l:'J',e:'Juice',em:'🧃',ar:'عصير'},{l:'K',e:'Kite',em:'🪁',ar:'طائرة ورقية'},{l:'L',e:'Lion',em:'🦁',ar:'أسد'},{l:'M',e:'Moon',em:'🌙',ar:'قمر'},{l:'N',e:'Nest',em:'🪺',ar:'عش'},{l:'O',e:'Orange',em:'🍊',ar:'برتقالة'},{l:'P',e:'Pizza',em:'🍕',ar:'بيتزا'},{l:'Q',e:'Queen',em:'👑',ar:'ملكة'},{l:'R',e:'Rainbow',em:'🌈',ar:'قوس قزح'},{l:'S',e:'Star',em:'⭐',ar:'نجمة'},{l:'T',e:'Tree',em:'🌳',ar:'شجرة'},{l:'U',e:'Umbrella',em:'☂️',ar:'مظلة'},{l:'V',e:'Volcano',em:'🌋',ar:'بركان'},{l:'W',e:'Watermelon',em:'🍉',ar:'بطيخ'},{l:'X',e:'X-Ray',em:'🩻',ar:'أشعة'},{l:'Y',e:'Yacht',em:'⛵',ar:'يخت'},{l:'Z',e:'Zebra',em:'🦓',ar:'حمار وحشي'}];
+const arAlpha=[{l:'أ',e:'أسد',em:'🦁',en:'Lion'},{l:'ب',e:'بيت',em:'🏠',en:'House'},{l:'ت',e:'تفاحة',em:'🍎',en:'Apple'},{l:'ث',e:'ثعلب',em:'🦊',en:'Fox'},{l:'ج',e:'جمل',em:'🐪',en:'Camel'},{l:'ح',e:'حصان',em:'🐴',en:'Horse'},{l:'خ',e:'خروف',em:'🐑',en:'Sheep'},{l:'د',e:'دجاجة',em:'🐔',en:'Chicken'},{l:'ذ',e:'ذئب',em:'🐺',en:'Wolf'},{l:'ر',e:'رمان',em:'🍑',en:'Pomegranate'},{l:'ز',e:'زهرة',em:'🌸',en:'Flower'},{l:'س',e:'سمكة',em:'🐟',en:'Fish'},{l:'ش',e:'شمس',em:'☀️',en:'Sun'},{l:'ص',e:'صاروخ',em:'🚀',en:'Rocket'},{l:'ض',e:'ضفدع',em:'🐸',en:'Frog'},{l:'ط',e:'طائر',em:'🐦',en:'Bird'},{l:'ظ',e:'ظبي',em:'🦌',en:'Deer'},{l:'ع',e:'عنب',em:'🍇',en:'Grapes'},{l:'غ',e:'غزال',em:'🦌',en:'Gazelle'},{l:'ف',e:'فراشة',em:'🦋',en:'Butterfly'},{l:'ق',e:'قمر',em:'🌙',en:'Moon'},{l:'ك',e:'كرة',em:'⚽',en:'Ball'},{l:'ل',e:'لبن',em:'🥛',en:'Milk'},{l:'م',e:'موز',em:'🍌',en:'Banana'},{l:'ن',e:'نجمة',em:'⭐',en:'Star'},{l:'ه',e:'هرة',em:'🐱',en:'Cat'},{l:'و',e:'وردة',em:'🌹',en:'Rose'},{l:'ي',e:'يد',em:'✋',en:'Hand'}];
+const colorsData=[{hex:'#FF0000',bg:'#FF6B6B',en:'Red',ar:'أحمر',em:'🍎'},{hex:'#FF8C00',bg:'#FF8E53',en:'Orange',ar:'برتقالي',em:'🍊'},{hex:'#FFD700',bg:'#F59E0B',en:'Yellow',ar:'أصفر',em:'🌟'},{hex:'#00B050',bg:'#10B981',en:'Green',ar:'أخضر',em:'🌿'},{hex:'#1E90FF',bg:'#44A8E0',en:'Blue',ar:'أزرق',em:'🫐'},{hex:'#8B00FF',bg:'#7B68EE',en:'Purple',ar:'بنفسجي',em:'🍇'},{hex:'#FF69B4',bg:'#EC4899',en:'Pink',ar:'وردي',em:'🌸'},{hex:'#8B4513',bg:'#92400E',en:'Brown',ar:'بني',em:'🍫'},{hex:'#000000',bg:'#374151',en:'Black',ar:'أسود',em:'🖤'},{hex:'#FFFFFF',bg:'#9CA3AF',en:'White',ar:'أبيض',em:'🤍'},{hex:'#808080',bg:'#6B7280',en:'Gray',ar:'رمادي',em:'🐘'},{hex:'#00CED1',bg:'#4ECDC4',en:'Turquoise',ar:'فيروزي',em:'🦋'}];
+const wordsData=[{em:'🍎',en:'Apple',ar:'تفاحة',sen:'I eat a red apple!',senar:'آكل تفاحة حمراء!',col:'#FF6B6B'},{em:'🐶',en:'Dog',ar:'كلب',sen:'The dog is happy!',senar:'الكلب سعيد!',col:'#F59E0B'},{em:'🌙',en:'Moon',ar:'قمر',sen:'The moon shines at night.',senar:'القمر يضيء الليل.',col:'#7B68EE'},{em:'🌈',en:'Rainbow',ar:'قوس قزح',sen:'A rainbow has many colors!',senar:'قوس القزح له ألوان كثيرة!',col:'#4ECDC4'},{em:'🏠',en:'House',ar:'بيت',sen:'My house is cozy.',senar:'بيتي دافئ.',col:'#FF8E53'},{em:'⭐',en:'Star',ar:'نجمة',sen:'Stars shine in the sky!',senar:'النجوم تلمع في السماء!',col:'#EF4444'},{em:'🚀',en:'Rocket',ar:'صاروخ',sen:'The rocket flies to space!',senar:'الصاروخ يطير إلى الفضاء!',col:'#A855F7'},{em:'🌸',en:'Flower',ar:'زهرة',sen:'The flower smells nice.',senar:'الزهرة تفوح بالعطر.',col:'#EC4899'},{em:'🍦',en:'Ice Cream',ar:'آيس كريم',sen:'Ice cream is so yummy!',senar:'الآيس كريم لذيذ!',col:'#44A8E0'},{em:'🦋',en:'Butterfly',ar:'فراشة',sen:'The butterfly is beautiful!',senar:'الفراشة جميلة!',col:'#10B981'},{em:'🌳',en:'Tree',ar:'شجرة',sen:'Birds live in the tree.',senar:'الطيور تعيش في الشجرة.',col:'#059669'},{em:'☀️',en:'Sun',ar:'شمس',sen:'The sun gives us light!',senar:'الشمس تعطينا الضوء!',col:'#F59E0B'}];
+const animalsData=[{em:'🦁',en:'Lion',ar:'أسد',sound:'Roar!',col:'#F59E0B'},{em:'🐘',en:'Elephant',ar:'فيل',sound:'Trumpet!',col:'#7B68EE'},{em:'🐬',en:'Dolphin',ar:'دلفين',sound:'Click!',col:'#44A8E0'},{em:'🐸',en:'Frog',ar:'ضفدع',sound:'Ribbit!',col:'#10B981'},{em:'🐧',en:'Penguin',ar:'بطريق',sound:'Squawk!',col:'#374151'},{em:'🦊',en:'Fox',ar:'ثعلب',sound:'Yip!',col:'#FF8E53'},{em:'🐮',en:'Cow',ar:'بقرة',sound:'Moo!',col:'#059669'},{em:'🐯',en:'Tiger',ar:'نمر',sound:'Roar!',col:'#EF4444'},{em:'🐒',en:'Monkey',ar:'قرد',sound:'Ooh ooh!',col:'#92400E'},{em:'🦒',en:'Giraffe',ar:'زرافة',sound:'Hmm!',col:'#F59E0B'},{em:'🐺',en:'Wolf',ar:'ذئب',sound:'Howl!',col:'#6B7280'},{em:'🦜',en:'Parrot',ar:'ببغاء',sound:'Hello!',col:'#10B981'},{em:'🐠',en:'Fish',ar:'سمكة',sound:'Blub!',col:'#4ECDC4'},{em:'🦋',en:'Butterfly',ar:'فراشة',sound:'Flutter!',col:'#EC4899'},{em:'🐪',en:'Camel',ar:'جمل',sound:'Grunt!',col:'#D97706'},{em:'🦓',en:'Zebra',ar:'حمار وحشي',sound:'Bark!',col:'#374151'},{em:'🐻',en:'Bear',ar:'دب',sound:'Growl!',col:'#92400E'},{em:'🐴',en:'Horse',ar:'حصان',sound:'Neigh!',col:'#FF8E53'}];
+const avatarList=[{em:'🦄',name:'Unicorn'},{em:'🚀',name:'Astronaut'},{em:'🦸',name:'Superhero'},{em:'🧜',name:'Mermaid'},{em:'🐉',name:'Dragon'},{em:'🦋',name:'Butterfly'},{em:'🌟',name:'Star'},{em:'🐼',name:'Panda'},{em:'🦊',name:'Fox'}];
+const alphaColors=['#FF6B6B','#FF8E53','#F59E0B','#10B981','#4ECDC4','#44A8E0','#7B68EE','#A855F7','#EC4899','#EF4444'];
+const countEmojis=['🍎','🌟','🐶','🌈','🍕','🦁','🚀','🌸','⚽','🍦'];
+const nellyColors=['#FF6B6B','#FF8E53','#FFD93D','#10B981','#4ECDC4','#44A8E0','#7B68EE','#A855F7','#EC4899','#F472B6'];
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
+window._recordingStore={};  // key -> URL (local blob or cloud URL)
+window._selectedAvatar='🦄';
+window._fbUser=null;
+
+// per-screen current index for nav
+const navIndex={
+  'numbers-en':0,'numbers-ar':0,'alpha-en':0,'alpha-ar':0,
+  'colors-screen':0,'words-screen':0,'animals-screen':0
+};
+const navData={
+  'numbers-en':null,'numbers-ar':null,'alpha-en':null,'alpha-ar':null,
+  'colors-screen':null,'words-screen':null,'animals-screen':null
+};
+const navCounterIds={'numbers-en':'nen-counter','numbers-ar':'nar-counter','alpha-en':'aen-counter','alpha-ar':'aar-counter','colors-screen':'col-counter','words-screen':'wrd-counter','animals-screen':'anm-counter'};
+const navPrevIds={'numbers-en':'nen-prev','numbers-ar':'nar-prev','alpha-en':'aen-prev','alpha-ar':'aar-prev','colors-screen':'col-prev','words-screen':'wrd-prev','animals-screen':'anm-prev'};
+const navNextIds={'numbers-en':'nen-next','numbers-ar':'nar-next','alpha-en':'aen-next','alpha-ar':'aar-next','colors-screen':'col-next','words-screen':'wrd-next','animals-screen':'anm-next'};
+
+let currentPopupScreen=null; // which screen the popup is from
+let currentPopupIndex=0;
+
+// ══════════════════════════════════════════════
+// VOICE
+// ══════════════════════════════════════════════
+let arVoice=null,enVoice=null,currentSpeak=null;
+function loadVoices(){
+  const all=speechSynthesis.getVoices();if(!all.length)return;
+  const arV=all.filter(v=>v.lang.startsWith('ar'));
+  arVoice=arV.find(v=>/maged|tarik|layla|amira/i.test(v.name))||arV.find(v=>/female/i.test(v.name))||arV[0]||null;
+  const enV=all.filter(v=>v.lang.startsWith('en'));
+  enVoice=enV.find(v=>/samantha|ava|karen|moira|fiona/i.test(v.name))||enV.find(v=>v.lang==='en-US')||enV[0]||null;
+}
+speechSynthesis.onvoiceschanged=loadVoices;loadVoices();
+setTimeout(loadVoices,600);setTimeout(loadVoices,1800);
+
+function speak(text,lang){
+  speechSynthesis.cancel();
+  const btn=document.getElementById('speak-btn');if(btn)btn.classList.add('speaking');
+  const u=new SpeechSynthesisUtterance(text);
+  const isAr=lang==='ar';
+  if(isAr&&arVoice){u.voice=arVoice;u.lang=arVoice.lang;}
+  else if(!isAr&&enVoice){u.voice=enVoice;u.lang=enVoice.lang;}
+  else{u.lang=isAr?'ar-SA':'en-US';}
+  u.rate=isAr?.72:.78;u.pitch=isAr?1.1:1.2;u.volume=1;
+  u.onend=()=>{if(btn)btn.classList.remove('speaking');};
+  u.onerror=()=>{if(btn)btn.classList.remove('speaking');};
+  speechSynthesis.speak(u);
+}
+function speakCurrent(){if(currentSpeak)speak(currentSpeak.text,currentSpeak.lang);}
+
+// ══════════════════════════════════════════════
+// RECORDING — works over HTTPS only
+// ══════════════════════════════════════════════
+let mediaRecorder=null,audioChunks=[],isRecording=false;
+
+function toggleRecord(){if(isRecording)stopRecording();else startRecording();}
+
+function startRecording(){
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+    document.getElementById('rec-status').textContent='⚠️ Mic needs HTTPS. Host on Netlify or GitHub Pages!';return;
+  }
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    audioChunks=[];
+    const opts=MediaRecorder.isTypeSupported('audio/webm')?{mimeType:'audio/webm'}:{};
+    mediaRecorder=new MediaRecorder(stream,opts);
+    mediaRecorder.ondataavailable=e=>audioChunks.push(e.data);
+    mediaRecorder.onstop=async()=>{
+      const blob=new Blob(audioChunks,{type:'audio/webm'});
+      const localUrl=URL.createObjectURL(blob);
+      const key=currentSpeak?currentSpeak.text:'unknown';
+      window._recordingStore[key]=localUrl;
+      document.getElementById('rec-play-btn').disabled=false;
+      document.getElementById('rec-status').textContent='✅ Saved! Tap ▶ My Voice to hear yourself.';
+      // Upload to Firebase if logged in
+      if(window._fbAuth&&window._fbUser){
+        document.getElementById('rec-status').textContent='☁️ Saving to your account...';
+        const cloudUrl=await window._fbAuth.saveRecordingToCloud(key,blob);
+        if(cloudUrl){window._recordingStore[key]=cloudUrl;document.getElementById('rec-status').textContent='☁️ ✅ Saved to your account!';}
+      }
+      stream.getTracks().forEach(t=>t.stop());
+    };
+    mediaRecorder.start();
+    isRecording=true;
+    document.getElementById('rec-record-btn').textContent='⏹ Stop';
+    document.getElementById('rec-record-btn').classList.add('recording');
+    document.getElementById('rec-status').textContent='🔴 Recording... tap Stop when done!';
+  }).catch(err=>{
+    let msg='⚠️ Mic access denied.';
+    if(err.name==='NotAllowedError')msg='⚠️ Please allow microphone in browser settings.';
+    if(err.name==='NotFoundError')msg='⚠️ No microphone found on this device.';
+    document.getElementById('rec-status').textContent=msg;
+  });
+}
+
+function stopRecording(){
+  if(mediaRecorder&&mediaRecorder.state!=='inactive')mediaRecorder.stop();
+  isRecording=false;
+  document.getElementById('rec-record-btn').textContent='🎙 Record';
+  document.getElementById('rec-record-btn').classList.remove('recording');
+}
+
+function playRecording(){
+  const key=currentSpeak?currentSpeak.text:'';
+  const url=window._recordingStore[key];
+  if(url){new Audio(url).play();}
+  else{document.getElementById('rec-status').textContent='No recording yet. Tap 🎙 Record first!';}
+}
+
+// ══════════════════════════════════════════════
+// LOGIN
+// ══════════════════════════════════════════════
+window.loginWithGoogle=async function(){
+  try{
+    await window._fbAuth.loginGoogle();
+    // onAuthStateChanged handles the rest
+  }catch(e){
+    const el=document.getElementById('login-error');
+    el.style.display='block';
+    el.textContent='⚠️ Sign-in failed. Make sure you added your Firebase config!';
+  }
+};
+window.loginAsGuest=function(){
+  document.getElementById('home-username').textContent='Friend';
+  window._showWelcome();
+};
+window.doLogout=async function(){
+  if(window._fbAuth&&window._fbUser){await window._fbAuth.logout();}
+  location.reload();
+};
+
+// ══════════════════════════════════════════════
+// WELCOME + NAV
+// ══════════════════════════════════════════════
+window._showWelcome=function(){
+  document.getElementById('login-screen').style.display='none';
+  const ws=document.getElementById('welcome-screen');ws.style.display='flex';
+  setTimeout(()=>speak('Welcome to Nelly World!','en'),900);
+};
+
+function buildLoginStars(){
+  const sw=document.getElementById('login-stars');
+  for(let i=0;i<40;i++){
+    const d=document.createElement('div');d.className='login-star';
+    const sz=2+Math.random()*4;
+    d.style.cssText=`width:${sz}px;height:${sz}px;background:${nellyColors[~~(Math.random()*nellyColors.length)]};left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${1.2+Math.random()*2.5}s;animation-delay:${Math.random()*2}s;`;
+    sw.appendChild(d);
+  }
+}
+
+function buildWelcome(){
+  const lc=document.getElementById('nelly-letters');
+  [...'Nelly World'].forEach((ch,i)=>{
+    const s=document.createElement('span');s.className='nelly-letter';
+    s.textContent=ch===' '?'\u00a0':ch;
+    s.style.color=nellyColors[i%nellyColors.length];
+    s.style.animationDelay=`${i*.08}s`;lc.appendChild(s);
+  });
+  const sw=document.getElementById('ws-stars');
+  for(let i=0;i<50;i++){
+    const d=document.createElement('div');d.className='star-dot';const sz=2+Math.random()*4;
+    d.style.cssText=`width:${sz}px;height:${sz}px;background:${nellyColors[~~(Math.random()*nellyColors.length)]};left:${Math.random()*100}%;top:${Math.random()*100}%;animation-duration:${1.2+Math.random()*2.5}s;animation-delay:${Math.random()*2}s;`;
+    sw.appendChild(d);
+  }
+  const bw=document.getElementById('ws-balloons');
+  ['🎈','🌟','🎊','🦋','🌈','🎀','⭐','🎁'].forEach((em,i)=>{
+    const b=document.createElement('div');b.className='balloon';b.textContent=em;
+    b.style.cssText=`left:${5+i*12}%;animation-duration:${5+Math.random()*6}s;animation-delay:${Math.random()*4}s;font-size:${1.8+Math.random()*1.2}rem;`;
+    bw.appendChild(b);
+  });
+}
+
+window.enterApp=function(){
+  const ws=document.getElementById('welcome-screen');
+  ws.style.transition='opacity .5s ease,transform .5s ease';
+  ws.style.opacity='0';ws.style.transform='scale(1.08)';
+  setTimeout(()=>{
+    ws.style.display='none';
+    if(!localStorage.getItem('nellyAvatar')&&!window._fbUser){
+      document.getElementById('avatar-screen').style.display='flex';
+    }
+  },520);
+};
+
+// ══════════════════════════════════════════════
+// AVATAR
+// ══════════════════════════════════════════════
+let selectedAvatarEm=avatarList[0].em;
+function buildAvatarGrid(){
+  const g=document.getElementById('av-grid');g.innerHTML='';
+  avatarList.forEach((av,i)=>{
+    const c=document.createElement('div');c.className='av-card'+(i===0?' selected':'');
+    c.innerHTML=`<div class="av-emoji">${av.em}</div><div class="av-name">${av.name}</div>`;
+    c.onclick=()=>{document.querySelectorAll('.av-card').forEach(x=>x.classList.remove('selected'));c.classList.add('selected');selectedAvatarEm=av.em;};
+    g.appendChild(c);
+  });
+}
+window.saveAvatar=function(){
+  localStorage.setItem('nellyAvatar',selectedAvatarEm);
+  window._selectedAvatar=selectedAvatarEm;
+  document.getElementById('home-avatar').textContent=selectedAvatarEm;
+  document.getElementById('avatar-screen').style.display='none';
+  if(window._fbAuth&&window._fbUser)window._fbAuth.saveAvatarToCloud(selectedAvatarEm);
+  speak(`Hello! I am your friend!`,'en');
+};
+window.openAvatarChange=function(){buildAvatarGrid();document.getElementById('avatar-screen').style.display='flex';};
+function initAvatar(){
+  const saved=localStorage.getItem('nellyAvatar');
+  if(saved){window._selectedAvatar=saved;document.getElementById('home-avatar').textContent=saved;}
+}
+
+// ══════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════
+function show(id){
+  document.querySelectorAll('#app > div').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+  const el=document.getElementById(id);el.style.display='flex';el.classList.add('active');
+  speechSynthesis.cancel();
+}
+window.show=show;
+
+function openYoutube(){window.open('https://www.youtube.com/watch?v=KjFG2Gyd-Wc','_blank');}
+window.openYoutube=openYoutube;
+
+// Per-screen prev/next nav (highlights item & opens popup)
+window.navItem=function(screenId,dir){
+  const data=navData[screenId];if(!data||!data.length)return;
+  navIndex[screenId]=Math.max(0,Math.min(data.length-1,navIndex[screenId]+dir));
+  const idx=navIndex[screenId];
+  updateNavButtons(screenId,data.length,idx);
+  // highlight card
+  const grid=document.querySelector(`#${screenId} .scroll-area > div`);
+  if(grid){
+    grid.querySelectorAll('[data-navindex]').forEach(el=>el.classList.remove('current-item'));
+    const card=grid.querySelector(`[data-navindex="${idx}"]`);
+    if(card){card.classList.add('current-item');card.scrollIntoView({behavior:'smooth',block:'nearest'});card.click();}
+  }
+};
+
+function updateNavButtons(screenId,total,idx){
+  const pid=navPrevIds[screenId],nid=navNextIds[screenId],cid=navCounterIds[screenId];
+  if(document.getElementById(pid))document.getElementById(pid).disabled=(idx===0);
+  if(document.getElementById(nid))document.getElementById(nid).disabled=(idx===total-1);
+  if(document.getElementById(cid))document.getElementById(cid).textContent=`${idx+1} / ${total}`;
+}
+
+function registerNavData(screenId,items){
+  navData[screenId]=items;navIndex[screenId]=0;
+  updateNavButtons(screenId,items.length,0);
+}
+
+// ══════════════════════════════════════════════
+// POPUP — with prev/next inside it
+// ══════════════════════════════════════════════
+function openPopup(emoji,letter,name,trans,speakText,lang,color,stars,sentence,screenId,idx){
+  currentPopupScreen=screenId||null;
+  currentPopupIndex=idx!==undefined?idx:0;
+  document.getElementById('popup-emoji').textContent=emoji;
+  document.getElementById('popup-letter').textContent=letter;
+  document.getElementById('popup-letter').style.color=color;
+  document.getElementById('popup-name').textContent=name;
+  document.getElementById('popup-trans').textContent=trans;
+  document.getElementById('popup-stars').textContent=stars||'⭐⭐⭐';
+  const senEl=document.getElementById('popup-sentence');
+  if(sentence){senEl.textContent=sentence;senEl.style.display='block';}else{senEl.style.display='none';}
+  document.getElementById('speak-btn').textContent=lang==='ar'?'🔊 قولها!':'🔊 Say it!';
+  // recording
+  const key=speakText;
+  const hasRec=!!window._recordingStore[key];
+  document.getElementById('rec-play-btn').disabled=!hasRec;
+  document.getElementById('rec-status').textContent=hasRec?'✅ You have a recording!':'';
+  document.getElementById('rec-record-btn').textContent='🎙 Record';
+  document.getElementById('rec-record-btn').classList.remove('recording');
+  isRecording=false;
+  currentSpeak={text:speakText,lang};
+  // popup nav buttons
+  if(screenId&&navData[screenId]){
+    const total=navData[screenId].length;
+    document.getElementById('pp-prev').disabled=(currentPopupIndex===0);
+    document.getElementById('pp-next').disabled=(currentPopupIndex===total-1);
+    document.querySelector('.popup-nav').style.display='flex';
+  } else {
+    document.querySelector('.popup-nav').style.display='none';
+  }
+  document.getElementById('popup').classList.add('open');
+  setTimeout(speakCurrent,420);
+}
+
+window.popupNav=function(dir){
+  if(!currentPopupScreen||!navData[currentPopupScreen])return;
+  const data=navData[currentPopupScreen];
+  currentPopupIndex=Math.max(0,Math.min(data.length-1,currentPopupIndex+dir));
+  navIndex[currentPopupScreen]=currentPopupIndex;
+  updateNavButtons(currentPopupScreen,data.length,currentPopupIndex);
+  // highlight card in grid
+  const grid=document.querySelector(`#${currentPopupScreen} .scroll-area > div`);
+  if(grid){
+    grid.querySelectorAll('[data-navindex]').forEach(el=>el.classList.remove('current-item'));
+    const card=grid.querySelector(`[data-navindex="${currentPopupIndex}"]`);
+    if(card){card.classList.add('current-item');card.scrollIntoView({behavior:'smooth',block:'nearest'});card.click();}
+  }
+};
+
+window.closePopup=function(e){
+  if(!e||e.target===document.getElementById('popup')){
+    if(isRecording)stopRecording();
+    document.getElementById('popup').classList.remove('open');
+    speechSynthesis.cancel();
+  }
+};
+
+// ══════════════════════════════════════════════
+// CONFETTI & RESULT
+// ══════════════════════════════════════════════
+function launchConfetti(){
+  const wrap=document.getElementById('confetti-wrap');wrap.innerHTML='';
+  const cols=['#FF6B6B','#FFD93D','#4ECDC4','#7B68EE','#FF8E53','#A855F7','#10B981'];
+  for(let i=0;i<55;i++){
+    const p=document.createElement('div');p.className='confetti-piece';const sz=6+Math.random()*8;
+    p.style.cssText=`left:${Math.random()*100}%;background:${cols[~~(Math.random()*cols.length)]};width:${sz}px;height:${sz}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${1.2+Math.random()*1.4}s;animation-delay:${Math.random()*.5}s;`;
+    wrap.appendChild(p);
+  }
+  setTimeout(()=>wrap.innerHTML='',3000);
+}
+function showResult(emoji,msg,scoreText,onPlay){
+  let b=document.getElementById('result-banner');if(b)b.remove();
+  b=document.createElement('div');b.className='result-banner';b.id='result-banner';
+  b.innerHTML=`<div class="result-emoji">${emoji}</div><div class="result-msg">${msg}</div><div class="result-score">${scoreText}</div><button class="result-btn" id="rb-btn">Play Again 🔄</button>`;
+  document.body.appendChild(b);
+  document.getElementById('rb-btn').onclick=()=>{b.remove();onPlay();};
+}
+
+// ══════════════════════════════════════════════
+// BUILD GRIDS
+// ══════════════════════════════════════════════
+function buildEnNumbers(){
+  const g=document.getElementById('en-numbers-grid');
+  const items=[];
+  for(let i=1;i<=100;i++){
+    const col=numColors[(i-1)%10];
+    const c=document.createElement('div');c.className='num-card';c.style.background=col;c.dataset.navindex=i-1;
+    c.innerHTML=`<div class="num">${i}</div><div class="name">${enNums[i-1]}</div>`;
+    const idx=i-1;
+    c.onclick=()=>{navIndex['numbers-en']=idx;updateNavButtons('numbers-en',100,idx);openPopup('🔢',i,enNums[i-1],'',enNums[i-1],'en',col,'⭐⭐⭐',null,'numbers-en',idx);};
+    g.appendChild(c);items.push({});
+  }
+  registerNavData('numbers-en',Array.from({length:100}));
+}
+function buildArNumbers(){
+  const g=document.getElementById('ar-numbers-grid');
+  for(let i=1;i<=100;i++){
+    const col=numColors[(i-1)%10];
+    const c=document.createElement('div');c.className='num-card';c.style.background=col;c.dataset.navindex=i-1;
+    c.innerHTML=`<div class="num">${arNumerals[i-1]}</div><div class="name">${arNums[i-1]}</div>`;
+    const idx=i-1;
+    c.onclick=()=>{navIndex['numbers-ar']=idx;updateNavButtons('numbers-ar',100,idx);openPopup('🔢',arNumerals[i-1],arNums[i-1],`( ${i} )`,arNums[i-1],'ar',col,'🌟🌟🌟',null,'numbers-ar',idx);};
+    g.appendChild(c);
+  }
+  registerNavData('numbers-ar',Array.from({length:100}));
+}
+function buildEnAlpha(){
+  const g=document.getElementById('en-alpha-grid');
+  enAlpha.forEach((a,i)=>{
+    const col=alphaColors[i%10];
+    const c=document.createElement('div');c.className='alpha-card';c.style.background=col;c.dataset.navindex=i;
+    c.innerHTML=`<div class="letter">${a.l}</div><div class="emoji">${a.em}</div><div class="word">${a.e}</div>`;
+    c.onclick=()=>{navIndex['alpha-en']=i;updateNavButtons('alpha-en',enAlpha.length,i);openPopup(a.em,a.l,`${a.l} — ${a.e}`,`🇦🇪 ${a.ar}`,`${a.l}... ${a.e}`,'en',col,'🌟⭐🌟',null,'alpha-en',i);};
+    g.appendChild(c);
+  });
+  registerNavData('alpha-en',enAlpha);
+}
+function buildArAlpha(){
+  const g=document.getElementById('ar-alpha-grid');
+  arAlpha.forEach((a,i)=>{
+    const col=alphaColors[i%10];
+    const c=document.createElement('div');c.className='alpha-card';c.style.background=col;c.dataset.navindex=i;
+    c.innerHTML=`<div class="letter">${a.l}</div><div class="emoji">${a.em}</div><div class="word">${a.e}</div>`;
+    c.onclick=()=>{navIndex['alpha-ar']=i;updateNavButtons('alpha-ar',arAlpha.length,i);openPopup(a.em,a.l,`${a.l} — ${a.e}`,`🇬🇧 ${a.en}`,`${a.l} ... ${a.e}`,'ar',col,'🌟🌟⭐',null,'alpha-ar',i);};
+    g.appendChild(c);
+  });
+  registerNavData('alpha-ar',arAlpha);
+}
+function buildColors(){
+  const g=document.getElementById('colors-grid');
+  colorsData.forEach((c,i)=>{
+    const card=document.createElement('div');card.className='color-card';card.style.background=c.bg;card.dataset.navindex=i;
+    card.innerHTML=`<div class="color-blob" style="background:${c.hex};border:3px solid rgba(255,255,255,.4)"></div><div class="color-name-en">${c.en}</div><div class="color-name-ar">${c.ar}</div><div style="font-size:1.4rem">${c.em}</div>`;
+    card.onclick=()=>{navIndex['colors-screen']=i;updateNavButtons('colors-screen',colorsData.length,i);openPopup(c.em,'',c.en,`🇦🇪 ${c.ar}`,`${c.en}! ${c.ar}`,'en',c.bg,'🎨🎨🎨',null,'colors-screen',i);};
+    g.appendChild(card);
+  });
+  registerNavData('colors-screen',colorsData);
+}
+function buildWords(){
+  const g=document.getElementById('words-grid');
+  wordsData.forEach((w,i)=>{
+    const card=document.createElement('div');card.className='word-card';card.style.background=w.col;card.dataset.navindex=i;
+    card.innerHTML=`<div class="wc-emoji">${w.em}</div><div class="wc-en">${w.en}</div><div class="wc-ar">${w.ar}</div><div class="wc-sentence">"${w.sen}"</div>`;
+    card.onclick=()=>{navIndex['words-screen']=i;updateNavButtons('words-screen',wordsData.length,i);openPopup(w.em,w.en,w.ar,`🗣 ${w.senar}`,`${w.en}! ${w.sen}`,'en',w.col,'📝📝📝',`"${w.sen}"`,'words-screen',i);};
+    g.appendChild(card);
+  });
+  registerNavData('words-screen',wordsData);
+}
+function buildAnimals(){
+  const g=document.getElementById('animals-grid');
+  animalsData.forEach((a,i)=>{
+    const card=document.createElement('div');card.className='animal-card';card.style.background=a.col;card.dataset.navindex=i;
+    card.innerHTML=`<div class="an-emoji">${a.em}</div><div class="an-en">${a.en}</div><div class="an-ar">${a.ar}</div><div class="an-sound">${a.sound}</div>`;
+    card.onclick=()=>{navIndex['animals-screen']=i;updateNavButtons('animals-screen',animalsData.length,i);openPopup(a.em,a.sound,a.en,`🇦🇪 ${a.ar}`,`${a.en}! ${a.sound}`,'en',a.col,'🐾🐾🐾',null,'animals-screen',i);};
+    g.appendChild(card);
+  });
+  registerNavData('animals-screen',animalsData);
+}
+
+// ══════════════════════════════════════════════
+// GAMES
+// ══════════════════════════════════════════════
+let cntScore=0,cntStreak=0,cntQ=0,cntAnswer=0,cntDone=false;
+window.startCounting=function(){show('game-counting');cntScore=0;cntStreak=0;cntQ=0;nextCounting();};
+window.nextCounting=function nextCounting(){
+  cntDone=false;document.getElementById('cnt-next').style.display='none';cntQ++;
+  document.getElementById('cnt-q').textContent=cntQ;document.getElementById('cnt-score').textContent=cntScore;document.getElementById('cnt-streak').textContent=cntStreak;
+  const max=Math.min(3+Math.floor(cntQ/2),9);cntAnswer=1+~~(Math.random()*max);
+  const em=countEmojis[~~(Math.random()*countEmojis.length)];
+  document.getElementById('cnt-emojis').textContent=em.repeat(cntAnswer);
+  const opts=new Set([cntAnswer]);while(opts.size<3){let v=Math.max(1,cntAnswer+~~(Math.random()*5)-2);if(v!==cntAnswer)opts.add(v);}
+  const arr=[...opts].sort(()=>Math.random()-.5);const og=document.getElementById('cnt-options');og.innerHTML='';
+  arr.forEach(v=>{
+    const b=document.createElement('div');b.className='count-opt';b.style.background=numColors[v%10];b.textContent=v;
+    b.onclick=()=>{
+      if(cntDone)return;cntDone=true;
+      if(v===cntAnswer){b.classList.add('correct');cntScore+=10;cntStreak++;launchConfetti();speak(enNums[cntAnswer-1],'en');
+        if(cntScore>=100)showResult('🏆','Amazing!',`Score: ${cntScore}`,window.startCounting);
+        else document.getElementById('cnt-next').style.display='block';
+      }else{b.classList.add('wrong');cntStreak=0;og.querySelectorAll('.count-opt').forEach(x=>{if(parseInt(x.textContent)===cntAnswer)x.classList.add('correct');});speak('try again','en');setTimeout(()=>document.getElementById('cnt-next').style.display='block',800);}
+      document.getElementById('cnt-score').textContent=cntScore;document.getElementById('cnt-streak').textContent=cntStreak;
+    };og.appendChild(b);
+  });
+};
+
+let matScore=0,matLeft=0,matSel=null;
+window.startMatching=function(){
+  show('game-matching');matScore=0;matSel=null;document.getElementById('mat-score').textContent=0;
+  const pairs=[];while(pairs.length<8){const n=1+~~(Math.random()*20);if(!pairs.find(p=>p.n===n))pairs.push({n,word:enNums[n-1],color:numColors[n%10]});}
+  matLeft=pairs.length;document.getElementById('mat-left').textContent=matLeft;
+  const numCol=document.getElementById('match-nums');const wordCol=document.getElementById('match-words');numCol.innerHTML='';wordCol.innerHTML='';
+  const shuffledW=[...pairs].sort(()=>Math.random()-.5);
+  pairs.forEach(p=>{const nb=document.createElement('div');nb.className='match-item';nb.style.background=p.color;nb.textContent=p.n;nb.dataset.key=p.n;nb.onclick=()=>matchClick(nb,p.n);numCol.appendChild(nb);});
+  shuffledW.forEach(p=>{const wb=document.createElement('div');wb.className='match-item';wb.style.background=p.color;wb.textContent=p.word;wb.dataset.key=p.n;wb.onclick=()=>matchClick(wb,p.n);wordCol.appendChild(wb);});
+};
+function matchClick(el,key){
+  if(el.classList.contains('matched'))return;
+  if(!matSel){matSel=el;el.classList.add('selected');speak(enNums[key-1],'en');return;}
+  if(matSel===el){matSel.classList.remove('selected');matSel=null;return;}
+  if(matSel.dataset.key===el.dataset.key){
+    matSel.classList.remove('selected');matSel.classList.add('matched');el.classList.add('matched');matScore+=15;matLeft--;
+    document.getElementById('mat-score').textContent=matScore;document.getElementById('mat-left').textContent=matLeft;
+    launchConfetti();speak(enNums[key-1],'en');matSel=null;
+    if(matLeft===0)setTimeout(()=>showResult('🎉','Perfect Match!',`Score: ${matScore}`,window.startMatching),500);
+  }else{
+    matSel.classList.remove('selected');el.classList.add('wrong-flash');matSel.classList.add('wrong-flash');
+    const prev=matSel;matSel=null;setTimeout(()=>{el.classList.remove('wrong-flash');prev.classList.remove('wrong-flash');},500);speak('try again','en');
+  }
+}
+
+let ddScore=0,ddLeft=0,ddDragging=null;
+window.startDragDrop=function(){
+  show('game-dragdrop');ddScore=0;ddLeft=0;document.getElementById('dd-score').textContent=0;document.getElementById('dd-next').style.display='none';
+  const ddPairs=[];while(ddPairs.length<6){const n=1+~~(Math.random()*15);if(!ddPairs.find(p=>p.n===n))ddPairs.push({n,word:enNums[n-1],color:numColors[n%10]});}
+  ddLeft=ddPairs.length;document.getElementById('dd-left').textContent=ddLeft;
+  const itemsEl=document.getElementById('dd-items');const targetsEl=document.getElementById('dd-targets');itemsEl.innerHTML='';targetsEl.innerHTML='';
+  const shuffled=[...ddPairs].sort(()=>Math.random()-.5);
+  shuffled.forEach(p=>{
+    const d=document.createElement('div');d.className='drag-item';d.style.background=p.color;
+    d.innerHTML=`<span style="font-size:1.3rem;font-weight:900;color:#fff">${p.n}</span><span class="di-sub">${p.word}</span>`;
+    d.dataset.key=p.n;d.draggable=true;
+    d.addEventListener('dragstart',()=>ddDragging=d);d.addEventListener('dragend',()=>ddDragging=null);
+    d.addEventListener('touchstart',e=>{e.preventDefault();ddDragging=d;d.style.opacity='.5';},{passive:false});
+    d.addEventListener('touchend',e=>{
+      e.preventDefault();if(!ddDragging)return;
+      const t=e.changedTouches[0];const target=document.elementFromPoint(t.clientX,t.clientY);
+      const zone=target&&target.closest('.drop-zone');
+      if(zone&&!zone.dataset.filled)handleDrop(ddDragging,zone);
+      ddDragging.style.opacity='1';ddDragging=null;
+    },{passive:false});
+    itemsEl.appendChild(d);
+  });
+  ddPairs.forEach(p=>{
+    const z=document.createElement('div');z.className='drop-zone';
+    z.innerHTML=`<span style="font-size:.7rem;font-weight:800;color:#bbb;text-align:center">${p.word}</span>`;z.dataset.key=p.n;
+    z.addEventListener('dragover',e=>{e.preventDefault();z.style.borderColor='#7B68EE';});
+    z.addEventListener('dragleave',()=>z.style.borderColor='');
+    z.addEventListener('drop',e=>{e.preventDefault();if(ddDragging)handleDrop(ddDragging,z);z.style.borderColor='';});
+    targetsEl.appendChild(z);
+  });
+};
+function handleDrop(item,zone){
+  if(item.dataset.key===zone.dataset.key){
+    zone.style.background=item.style.background;zone.style.borderStyle='solid';zone.style.borderColor=item.style.background;
+    zone.innerHTML=`<span style="font-size:1.2rem;font-weight:900;color:#fff">${item.dataset.key}</span><span style="font-size:.5rem;font-weight:700;color:rgba(255,255,255,.85)">${enNums[parseInt(item.dataset.key)-1]}</span>`;
+    zone.dataset.filled='1';item.classList.add('placed');ddScore+=12;ddLeft--;
+    document.getElementById('dd-score').textContent=ddScore;document.getElementById('dd-left').textContent=ddLeft;
+    launchConfetti();speak(enNums[parseInt(item.dataset.key)-1],'en');
+    if(ddLeft===0){document.getElementById('dd-next').style.display='block';setTimeout(()=>showResult('🌟','You did it!',`Score: ${ddScore}`,window.startDragDrop),500);}
+  }else{zone.style.borderColor='#EF4444';setTimeout(()=>zone.style.borderColor='',600);speak('try again','en');}
+}
+
+let spScore=0,spStreak=0,spQ=0,spAnswer='',spDone=false;
+window.startSpotLetter=function(){show('game-spot');spScore=0;spStreak=0;spQ=0;nextSpot();};
+window.nextSpot=function nextSpot(){
+  spDone=false;document.getElementById('sp-next').style.display='none';spQ++;
+  const spMode=Math.random()>.5?'en':'ar';
+  document.getElementById('sp-q').textContent=spQ;document.getElementById('sp-score').textContent=spScore;document.getElementById('sp-streak').textContent=spStreak;
+  const pool=spMode==='en'?enAlpha:arAlpha;const shuffle=[...pool].sort(()=>Math.random()-.5).slice(0,4);
+  const correct=shuffle[~~(Math.random()*4)];spAnswer=correct.l;
+  document.getElementById('sp-instruction').textContent=spMode==='en'?'Find this letter! 👇':'أوجد هذا الحرف! 👇';
+  document.getElementById('sp-target').textContent=correct.em+' '+correct.l;
+  document.getElementById('sp-hint').textContent=`"${correct.e}"`;
+  speak(spMode==='en'?`Find the letter ${correct.l}, ${correct.e}`:`${correct.l} مثل ${correct.e}`,spMode);
+  const og=document.getElementById('sp-options');og.innerHTML='';
+  shuffle.forEach((a,i)=>{
+    const b=document.createElement('div');b.className='opt-btn';b.style.background=numColors[i*2%10];
+    b.innerHTML=`<span style="font-size:1.8rem">${a.l}</span><span class="opt-sub">${a.em} ${a.e}</span>`;
+    b.onclick=()=>{
+      if(spDone)return;spDone=true;
+      if(a.l===spAnswer){b.classList.add('correct');spScore+=10;spStreak++;launchConfetti();speak(spMode==='en'?`${a.l} for ${a.e}`:`${a.l} مثل ${a.e}`,spMode);
+        if(spScore>=100)showResult('🏆','Star Player!',`Score: ${spScore}`,window.startSpotLetter);
+        else document.getElementById('sp-next').style.display='block';
+      }else{b.classList.add('wrong');spStreak=0;og.querySelectorAll('.opt-btn').forEach(x=>{if(x.querySelector('span:first-child').textContent.trim()===spAnswer)x.classList.add('correct');});speak('try again','en');setTimeout(()=>document.getElementById('sp-next').style.display='block',700);}
+      document.getElementById('sp-score').textContent=spScore;document.getElementById('sp-streak').textContent=spStreak;
+    };og.appendChild(b);
+  });
+};
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+buildLoginStars();
+buildWelcome();
+buildAvatarGrid();
+initAvatar();
+buildEnNumbers();buildArNumbers();buildEnAlpha();buildArAlpha();
+buildColors();buildWords();buildAnimals();
+document.getElementById('home').style.display='flex';
+document.querySelectorAll('.screen:not(#home)').forEach(s=>s.style.display='none');
+</script>
+</body>
+</html>
